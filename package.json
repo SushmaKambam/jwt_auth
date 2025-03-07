@@ -7,8 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
     "dev": "nodemon server.js",
-    "predeploy": "mkdir -p dist && cp -r public/* dist/",
-    "deploy": "gh-pages -d dist"
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build",
+    "build": "mkdir -p build && cp -r public/* build/"
   },
   "keywords": [],
   "author": "",
@@ -25,6 +26,7 @@
     "mongoose": "^6.13.8"
   },
   "devDependencies": {
+    "gh-pages": "^6.3.0",
     "nodemon": "^3.1.9"
   }
 }

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Welcome to Auth System</title>
+    <link rel="stylesheet" href="/styles.css">
+    <style>
+        .welcome-box {
+            text-align: center;
+            padding: 20px;
+        }
+        .buttons-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .welcome-box h1 {
+            color: #424242;
+            font-size: 32px;
+            margin-bottom: 20px;
+        }
+        .welcome-box p {
+            color: #757575;
+            font-size: 18px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-login {
+            background: linear-gradient(45deg, #757575, #9e9e9e);
+            color: white;
+            border: none;
+        }
+        .btn-register {
+            background: white;
+            color: #616161;
+            border: 2px solid #757575;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(158, 158, 158, 0.2);
+        }
+        .btn-login:hover {
+            background: linear-gradient(45deg, #616161, #757575);
+        }
+        .btn-register:hover {
+            color: #424242;
+            border-color: #616161;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="welcome-box">
+            <h1>Welcome!</h1>
+            <p>Join our secure authentication system. Access your account or create a new one to get started.</p>
+            <div class="buttons-container">
+                <button onclick="window.location.href='./login.html'" class="btn btn-login">
+                    Login Here
+                </button>
+                <button onclick="window.location.href='./register.html'" class="btn btn-register">
+                    Register Here
+                </button>
+            </div>
+            <div class="link">
+                <p>Already have an account? <a href="./login.html">Login here</a></p>
+                <p><a href="./register.html">Register</a></p>
+                <p><a href="./forgot-password.html">Forgot Password?</a></p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

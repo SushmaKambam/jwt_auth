@@ -1,0 +1,46 @@
+### 1. First Register a New User
+POST http://localhost:5001/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "testuser",
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+### 2. Then Login
+POST http://localhost:5001/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123"
+}
+
+### 3. Test Protected Route (Copy token from login response)
+GET http://localhost:5001/api/auth/protected
+Authorization: Bearer your_token_here
+
+### Test Register
+POST http://localhost:5001/api/auth/register
+Content-Type: application/json
+
+{
+    "username": "testuser1",
+    "email": "test1@example.com",
+    "password": "password123"
+}
+
+### Test Login
+POST http://localhost:5001/api/auth/login
+Content-Type: application/json
+
+{
+    "email": "test1@example.com",
+    "password": "password123"
+}
+
+### Test Protected Route
+GET http://localhost:5001/api/auth/protected
+Authorization: Bearer <paste_your_token_here>
+

@@ -9,12 +9,21 @@ const authRoutes = require('./routes/auth');
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true
+}));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Update the root route
+// Test route
+app.get('/test', (req, res) => {
+    res.json({ msg: 'Server is running' });
+});
+
+// Routes
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.get('/welcome', (req, res) => {
@@ -43,36 +52,37 @@ app.use((req, res, next) => {
   res.status(404).send('Page not found');
 });
 
-// MongoDB connection with retry logic
-const connectWithRetry = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 10000,
-      socketTimeoutMS: 45000,
-    });
-    console.log('MongoDB connected successfully');
-    startServer();
-  } catch (err) {
-    console.error('MongoDB connection error:', err);
-    console.log('Retrying connection in 5 seconds...');
-    setTimeout(connectWithRetry, 5000);
-  }
+mongoose.set('strictQuery', false);
+
+const connectDB = async () => {
+    try {
+        if (!process.env.MONGO_URI) {
+            throw new Error('MongoDB URI is not defined');
+        }
+        
+        await mongoose.connect(process.env.MONGO_URI, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+            serverSelectionTimeoutMS: 5000,
+        });
+        console.log('MongoDB connected successfully');
+        startServer();
+    } catch (err) {
+        console.error('MongoDB connection error:', err.message);
+        process.exit(1);
+    }
 };
 
 const startServer = () => {
-  const PORT = process.env.PORT || 5001;
-  try {
-    app.listen(PORT, () => {
-      console.log(`Server running at http://localhost:${PORT}`);
+    const PORT = process.env.PORT || 5001;
+    app.listen(PORT, '0.0.0.0', () => {
+        console.log(`Server running at http://localhost:${PORT}`);
+    }).on('error', (err) => {
+        console.error('Server failed to start:', err);
+        process.exit(1);
     });
-  } catch (err) {
-    console.error('Server failed to start:', err);
-    process.exit(1);
-  }
 };
 
 // Initialize
 console.log('Starting application...');
-connectWithRetry();
+connectDB();

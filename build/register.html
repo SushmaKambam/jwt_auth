@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Create Account</h2>
+        <form id="registerForm">
+            <div class="form-group">
+                <label>Username:</label>
+                <input type="text" id="username" required minlength="3">
+                <div class="validation-message" id="username-error"></div>
+            </div>
+            <div class="form-group">
+                <label>Email:</label>
+                <input type="email" id="email" required>
+                <div class="validation-message" id="email-error"></div>
+            </div>
+            <div class="form-group">
+                <label>Password:</label>
+                <div class="password-container">
+                    <input type="password" id="password" required minlength="6">
+                    <span class="password-toggle" onclick="togglePassword('password')">👁️</span>
+                </div>
+                <div class="validation-message" id="password-error"></div>
+                <ul class="requirements">
+                    <li id="length">At least 6 characters</li>
+                    <li id="uppercase">One uppercase letter</li>
+                    <li id="lowercase">One lowercase letter</li>
+                    <li id="number">One number</li>
+                </ul>
+            </div>
+            <button type="submit">Register</button>
+        </form>
+        <div class="link">
+            <p>Already have an account? <a href="/login">Login here</a></p>
+        </div>
+    </div>
+
+    <script>
+        function togglePassword(inputId) {
+            const input = document.getElementById(inputId);
+            const toggle = input.nextElementSibling;
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                toggle.style.opacity = '0.8';
+            } else {
+                input.type = 'password';
+                toggle.style.opacity = '1';
+            }
+        }
+
+        function validateForm() {
+            let isValid = true;
+            const username = document.getElementById('username');
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+
+            // Username validation
+            if (username.value.length < 3) {
+                showError('username-error', 'Username must be at least 3 characters');
+                username.classList.add('input-error');
+                isValid = false;
+            } else {
+                clearError('username-error');
+                username.classList.remove('input-error');
+            }
+
+            // Email validation
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(email.value)) {
+                showError('email-error', 'Please enter a valid email address');
+                email.classList.add('input-error');
+                isValid = false;
+            } else {
+                clearError('email-error');
+                email.classList.remove('input-error');
+            }
+
+            // Password validation
+            const hasUpperCase = /[A-Z]/.test(password.value);
+            const hasLowerCase = /[a-z]/.test(password.value);
+            const hasNumber = /\d/.test(password.value);
+            const isLongEnough = password.value.length >= 6;
+
+            document.getElementById('length').className = isLongEnough ? 'valid' : 'invalid';
+            document.getElementById('uppercase').className = hasUpperCase ? 'valid' : 'invalid';
+            document.getElementById('lowercase').className = hasLowerCase ? 'valid' : 'invalid';
+            document.getElementById('number').className = hasNumber ? 'valid' : 'invalid';
+
+            if (!(isLongEnough && hasUpperCase && hasLowerCase && hasNumber)) {
+                showError('password-error', 'Password does not meet requirements');
+                password.classList.add('input-error');
+                isValid = false;
+            } else {
+                clearError('password-error');
+                password.classList.remove('input-error');
+            }
+
+            return isValid;
+        }
+
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.classList.add('error');
+        }
+
+        function clearError(elementId) {
+            const element = document.getElementById(elementId);
+            element.textContent = '';
+            element.classList.remove('error');
+        }
+
+        // Add validation to form submission
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!validateForm()) {
+                return;
+            }
+            try {
+                const formData = {
+                    username: document.getElementById('username').value,
+                    email: document.getElementById('email').value,
+                    password: document.getElementById('password').value
+                };
+                
+                console.log('Sending registration data:', formData);
+                
+                const response = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                console.log('Registration response:', data);
+
+                if (response.ok) {
+                    alert('Successfully registered!');
+                    window.location.href = '/login';
+                } else {
+                    throw new Error(data.msg || 'Registration failed');
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                alert('Registration failed: ' + error.message);
+            }
+        });
+
+        // Real-time validation
+        ['username', 'email', 'password'].forEach(id => {
+            document.getElementById(id).addEventListener('input', validateForm);
+        });
+    </script>
+</body>
+</html>
